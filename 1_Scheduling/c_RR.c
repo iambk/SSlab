@@ -63,8 +63,7 @@ int main() {
   atat = (float)stat / n;
 
   printf("\nProcess\tBurst time\tWaiting time\tTurnaround time\n");
-  for (i = 0; i < n; i++)
-  {
+  for (i = 0; i < n; i++) {
     printf("P[%d]\t\t%d\t\t%d\t\t%d", i, bt[i], wt[i], tat[i]);
     printf("\n");
   }
