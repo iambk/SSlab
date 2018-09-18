@@ -1,43 +1,27 @@
-#include<stdio.h>
+/**
+ * Hail Commentless programming
+ */
 
-struct Process {
-	int pid;
-	int bt;
-};
-
-int partition(struct Process A[], int p, int r){
-	int x = A[r].bt;
-	int i = p-1,j;
-	for (j=p;j<=r-1;j++){
-		if(A[j].bt<=x){
-			i += 1;
-			struct Process temp = A[i];
-			A[i] = A[j];
-			A[j] = temp;
-		}
-	}
-	struct Process temp = A[i+1];
-	A[i+1] = A[r];
-  A[r] = temp;
-  return i+1;
-}
-
-void quickSort(struct Process A[], int p, int r){
-	if(p<r){
-		int q = partition(A,p,r);
-		quickSort(A,p,q-1);
-		quickSort(A,q+1,r);
-	}
-}
+#include "header.h"
+#include "header.c"
+#include <stdio.h>
 
 int main() {
 	int n;
 	printf("Enter the no. of processes: ");
 	scanf("%d", &n);
+
+  if(n==0) {
+		printf("Why would you even require an algorithm?");
+		return 0;
+	}
+
 	struct Process P[n];
 	int  wt[n], tat[n], swt=0, stat=0;
 	float awt = 0, atat=0;
+
 	printf("\nProcess \t Burst time\n");
+  
 	int i;
 	for(i=0; i<n; i++) {
 		printf("P[%d]\t\t", i);
@@ -46,11 +30,7 @@ int main() {
 		printf("\n");
 	}
 
-	quickSort(P, 0, n-1);
-
-	printf("\nProcess \t Burst time");
-	for(i=0; i<n; i++)
-		printf("\n%d\t\t%d", P[i].pid, P[i].bt);
+	quickSort(P, 0, n-1, 's');
 
 	wt[0] = 0;
 	tat[0] = P[0].bt;

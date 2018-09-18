@@ -1,56 +1,76 @@
-/** 
- * Author : Shawn Mathew
- * Copyrights reserved
+/**
+ * Hail Commentless programming
  */
 
-
+#include "header.h"
 #include <stdio.h>
+#include <stdbool.h>
 
-struct process //I thought a process needed the rights of an individual
-{
-  int pid, burst, done; //I'll burst any moment
-};                      //Do I need a semicolon here?
+int main() {
+  int n;
+	printf("Enter the no. of processes: ");
+	scanf("%d", &n);
 
-void main()
-{
-  int c = 0, n, f, i, quantum, offset = 0; //'n' for the number of processes, 'i' for general purpose and offset to handle the extra quantum time
-  struct process processes[10];
-  printf("Enter the time quantum: "); //Obtain the time quantum from the user
+	if(n==0) {
+		printf("Why would you even require an algorithm?");
+		return 0;
+	}
+
+	int i, rem_bt[n], bt[n], wt[n], tat[n], swt=0, stat=0, quantum;
+	float awt=0, atat=0;
+
+	printf("\nEnter the burst time for each process.\n");
+	printf("Process\t\tBurst time\n");
+	for(i=0; i<n; i++) {
+		printf("P[%d]\t\t", i);
+		scanf("%d", &bt[i]);
+    rem_bt[i] = bt[i];
+		printf("\n");
+	}
+  printf("\nEnter the quantum time: ");
   scanf("%d", &quantum);
-  printf("Enter the number of processes: "); //Demand the number of processes from the user
-  scanf("%d", &n);
-  f = n;
-  printf("\nYou will be asked the details of the processes now.\n");
-  for (i = 0; i < n; i++) //Get all the processes and their details
-  {
-    printf("\nEnter the pid of the process: ");
-    scanf("%d", &processes[i].pid); //As far as I remember, the dot operator is used for these things
-    printf("Enter the burst time: ");
-    scanf("%d", &processes[i].burst);
-  }
-  printf("\n");
-  while (f)
-  {
-    c++; //'c' sees the number of cycles
+  
+  int t = 0;
 
-    printf("\nRunning at %d cycle", c);
-
-    for (i = 0; i < n; i++)
-    {
-      if (!processes[i].done)
-      {
-        processes[i].burst -= quantum - offset; //The offset would be negative. Play of signs here
-        offset = 0;
-        if (processes[i].burst <= 0)
-        {
-          offset = processes[i].burst; //The offset is used to take the remaining quantum time into consideration
-          processes[i].done = 1;
-          f--; //One down, 'f' more to go! (oh, the innuendo)
-          c++;
-          printf("\nProcess with ID %d has been executed ]------(:P)<-== [  at the cycle %d T_T", processes[i].pid, c);
+  while(1) {
+    bool done = true;
+    for (int i=0; i<n; i++) {
+      if (rem_bt[i] > 0) {
+        done = false;
+        if (rem_bt[i] > quantum) {
+          t += quantum;
+          rem_bt[i] -= quantum;
+        } else {
+          t = t + rem_bt[i];
+          wt[i] = t - bt[i];
+          rem_bt[i] = 0;
         }
       }
     }
+    if (done == true)
+      break;
   }
+
+  for (int i=0; i<n ; i++)
+    tat[i] = bt[i] + wt[i];
+
+  for (int i=0; i<n; i++) {
+    swt = swt + wt[i];
+    stat = stat + tat[i];
+  }
+
+  awt = (float)swt / n;
+  atat = (float)stat / n;
+
+  printf("\nProcess\tBurst time\tWaiting time\tTurnaround time\n");
+  for (i = 0; i < n; i++)
+  {
+    printf("P[%d]\t\t%d\t\t%d\t\t%d", i, bt[i], wt[i], tat[i]);
+    printf("\n");
+  }
+
+  printf("\n\nAverage waiting time: %.2lf", awt);
+  printf("\nAverage turnaround time: %.2lf", atat);
   printf("\n");
+  return 0;
 }

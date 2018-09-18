@@ -1,22 +1,32 @@
-#include<stdio.h>
+/**
+ * Hail Commentless programming
+ */
+
+#include <stdio.h>
 
 int main() {
 	int n;
+
 	printf("Enter the no. of processes: ");
 	scanf("%d", &n);
+
 	if(n==0) {
 		printf("Why would you even require an algorithm?");
 		return 0;
 	}
+
 	int i, bt[n], wt[n], tat[n], swt=0, stat=0;
 	float awt=0, atat=0;
+
 	printf("\nEnter the burst time for each process.\n");
 	printf("Process\t\tBurst time\n");
+
 	for(i=0; i<n; i++) {
 		printf("P[%d]\t\t", i);
 		scanf("%d", &bt[i]);
 		printf("\n");
 	}
+  
 	wt[0] = 0;
 	tat[0] = bt[0];
 	stat = tat[0];
