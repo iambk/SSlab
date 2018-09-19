@@ -36,11 +36,14 @@ int main() {
       for (int j=i+1; j<n; j++) {
         seekTime += abs(requestQueue[j] - head);
         head = requestQueue[j];
+				printf("\nCurrent head -> %d", head);
       }
       head = 0;
+			printf("\nCurrent head -> %d", head);
       for (int k=0; k<=i; k++) {
         seekTime += abs(requestQueue[k] - head);
         head = requestQueue[k];
+				printf("\nCurrent head -> %d", head);
       }
 			break;
     }
@@ -48,7 +51,7 @@ int main() {
 
 	avgSeekTime = (float)seekTime/n;
 
-	printf("\nThe total seek time is: %d", seekTime);
+	printf("\n\nThe total seek time is: %d", seekTime);
 	printf("\nThe average seek time is : %.3f", avgSeekTime);
 	printf("\n");
 
