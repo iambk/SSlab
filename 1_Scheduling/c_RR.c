@@ -37,6 +37,7 @@ int main() {
     for (int i=0; i<n; i++) {
       if (rem_bt[i] > 0) {
         done = false;
+				printf("\nCurrent process -> %d", i);
         if (rem_bt[i] > quantum) {
           t += quantum;
           rem_bt[i] -= quantum;
@@ -62,7 +63,7 @@ int main() {
   awt = (float)swt / n;
   atat = (float)stat / n;
 
-  printf("\nProcess\tBurst time\tWaiting time\tTurnaround time\n");
+  printf("\n\nProcess\tBurst time\tWaiting time\tTurnaround time\n");
   for (i = 0; i < n; i++) {
     printf("P[%d]\t\t%d\t\t%d\t\t%d", i, bt[i], wt[i], tat[i]);
     printf("\n");
