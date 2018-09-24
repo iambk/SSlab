@@ -8,7 +8,7 @@
 #include <stdlib.h>
 
 int main() {
-  int head, seekTime = 0, n;
+  int head, seekTime = 0, n, max;
 	
 	printf("Enter the number of requests: ");
 	scanf("%d", &n);
@@ -27,6 +27,8 @@ int main() {
 	}
 	printf("Enter the head position: ");
 	scanf("%d", &head);
+	printf("Enter the maximum disk size: ");
+	scanf("%d", &max);
 
   quickSort(requestQueue, 0, n-1);
 
@@ -38,6 +40,9 @@ int main() {
         head = requestQueue[j];
 				printf("\nCurrent head -> %d", head);
       }
+			seekTime += abs(max-head);
+			head = max;
+			printf("\nCurrent head -> %d", head);
       head = 0;
 			printf("\nCurrent head -> %d", head);
       for (int k=0; k<=i; k++) {
