@@ -20,40 +20,16 @@ int main() {
 	printf("Process\tAllocation[A B C...]\tMax[A B C...]\n");
 	for (int i=0; i<n; i++) {
 		printf("P%d\t", i);
+		Finish[i] = false;
+		Work[i] = Available[i];
 		for (int j=0; j<m; j++) {
 			scanf("%d", &Allocation[i][j]);
 		}
-		for (int j=0; j<m; j++) {
-			scanf("%d", &Max[i][j]);
+		for (int k=0; k<m; k++) {
+			scanf("%d", &Max[i][k]);
+			Need[i][k] = Max[i][k] - Allocation[i][k];
 		}
 	}
-
-	//Calculate Need and initialize finish as false for all processes
-	for (int i = 0; i<n; i++) {
-		Finish[i] = false;
-		Work[i] = Available[i];
-		for (int j = 0; j<m; j++) {
-			Need[i][j] = Max[i][j] - Allocation[i][j];
-		}
-	}
-
-	//Display the details
-	printf("\nProcess\tNeed[A B C..]\tAllocation\tMax[A B C..]\n");
-	for (int i=0; i<n; i++) {
-		printf("P%d\t", i);
-		for (int j=0; j<m; j++) {
-			printf("%d ", Need[i][j]);
-		}
-		printf("\t\t");
-		for (int j=0; j<m; j++) {
-			printf("%d ", Allocation[i][j]);
-		}
-		printf("\t\t");
-		for (int j=0; j<m; j++) {
-			printf("%d ", Max[i][j]);
-		}
-		printf("\n");
-	}		
 
 	while (count < n) {
 		bool found = false;
