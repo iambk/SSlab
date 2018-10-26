@@ -16,19 +16,6 @@ typedef struct file_node
 }file;
  
 file *root, *pwd, *pwd_last;
-
-int to_num(char *cmd)
-{
-	int choice, i;
-	char commands[9][50] = {"pwd", "ls", "cd", "mkdir", "touch", "rmdir", "rm", "find", "exit"};
-
-	for(i = 0;i < 9;i++)
-	{
-		if(!strcmp(cmd, commands[i]))
-				return i;
-	}
-	return -1;
-}
  
 void NewNode(char*, int);
 void mkdir();
@@ -49,9 +36,18 @@ void main()
 
 	while(1)
 	{
-		scanf("%s", cmd);
+		printf("\n\n...Menu...\n\n");
+		printf("0. Show present working directory\n");
+		printf("1. List all files and directories\n");
+		printf("2. Goto \n");
+		printf("3. Create a directory\n");
+		printf("4. Create a file\n");
+		printf("5. Remove a directory\n");
+		printf("6. Remove a file\n");
+		printf("7. Search\n");
+		printf("8. Exit\n\n");
 
-		choice = to_num(cmd);
+		scanf("%d", &choice);
 
 		switch(choice)
 		{
