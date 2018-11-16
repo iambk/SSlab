@@ -1,91 +1,73 @@
-#include<stdio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
 
-#define n 4
+pthread_t *philosophers;
+pthread_mutex_t *forks;
 
-int compltedPhilo = 0,i;
+int philosophers_count;
 
-struct fork{
-	int taken;
-}ForkAvil[n];
+void eat(int i) {
 
-struct philosp{
-	int left;
-	int right;
-}Philostatus[n];
+	printf("\n\tPhilosopher %d is eating\n", i+1);
 
-void goForDinner(int philID){ //same like threads concept here cases implemented
-	if(Philostatus[philID].left==10 && Philostatus[philID].right==10)
-		printf("Philosopher %d completed his dinner\n",philID+1);
-	//if already completed dinner
-	else if(Philostatus[philID].left==1 && Philostatus[philID].right==1){
-		//if just taken two forks
-		printf("Philosopher %d completed his dinner\n",philID+1);
-
-		Philostatus[philID].left = Philostatus[philID].right = 10; //remembering that he completed dinner by assigning value 10
-		int otherFork = philID-1;
-
-		if(otherFork== -1)
-			otherFork=(n-1);
-
-		ForkAvil[philID].taken = ForkAvil[otherFork].taken = 0; //releasing forks
-		printf("Philosopher %d released fork %d and fork %d\n",philID+1,philID+1,otherFork+1);
-		compltedPhilo++;
-	}
-	else if(Philostatus[philID].left==1 && Philostatus[philID].right==0){ //left already taken, trying for right fork
-		if(philID==(n-1)){
-			if(ForkAvil[philID].taken==0){ //KEY POINT OF THIS PROBLEM, THAT LAST PHILOSOPHER TRYING IN reverse DIRECTION
-				ForkAvil[philID].taken = Philostatus[philID].right = 1;
-				printf("Fork %d taken by philosopher %d\n",philID+1,philID+1);
-			}else{
-				printf("Philosopher %d is waiting for fork %d\n",philID+1,philID+1);
-			}
-		}else{ //except last philosopher case
-			int dupphilID = philID;
-			philID-=1;
-
-			if(philID== -1)
-				philID=(n-1);
-
-			if(ForkAvil[philID].taken == 0){
-				ForkAvil[philID].taken = Philostatus[dupphilID].right = 1;
-				printf("Fork %d taken by Philosopher %d\n",philID+1,dupphilID+1);
-			}else{
-				printf("Philosopher %d is waiting for Fork %d\n",dupphilID+1,philID+1);
-			}
-		}
-	}
-	else if(Philostatus[philID].left==0){ //nothing taken yet
-		if(philID==(n-1)){
-			if(ForkAvil[philID-1].taken==0){ //KEY POINT OF THIS PROBLEM, THAT LAST PHILOSOPHER TRYING IN reverse DIRECTION
-				ForkAvil[philID-1].taken = Philostatus[philID].left = 1;
-				printf("Fork %d taken by philosopher %d\n",philID,philID+1);
-			}else{
-				printf("Philosopher %d is waiting for fork %d\n",philID+1,philID);
-			}
-		}else{ //except last philosopher case
-			if(ForkAvil[philID].taken == 0){
-				ForkAvil[philID].taken = Philostatus[philID].left = 1;
-				printf("Fork %d taken by Philosopher %d\n",philID+1,philID+1);
-			}else{
-				printf("Philosopher %d is waiting for Fork %d\n",philID+1,philID+1);
-			}
-		}
-	}else{}
+	sleep(1 + rand()%2);
 }
 
-int main(){
-	for(i=0;i<n;i++)
-		ForkAvil[i].taken=Philostatus[i].left=Philostatus[i].right=0;
-
-	while(compltedPhilo<n){
-		/* Observe here carefully, while loop will run until all philosophers complete dinner
-			 Actually problem of deadlock occur only thy try to take at same time
-			 This for loop will say that they are trying at same time. And remaining status will print by go for dinner function
-		 */
-		for(i=0;i<n;i++)
-			goForDinner(i);
-		printf("\nTill now num of philosophers completed dinner are %d\n\n",compltedPhilo);
+void* philosopher(void* args) {
+	int i = 0, first, second;
+	while(!pthread_equal(*(philosophers+i),pthread_self()) && i < philosophers_count) {
+		i++;
 	}
+
+	while(1) {
+
+		printf("\nPhilosopher %d is thinking\n", i+1);
+
+		sleep(1 + rand()%2);
+		
+		first = i;
+		second = (i+1)%philosophers_count;
+
+		pthread_mutex_lock(forks + (first>second?second:first));
+		pthread_mutex_lock(forks + (first<second?second:first));
+		eat(i);
+		pthread_mutex_unlock(forks+first);
+		pthread_mutex_unlock(forks+second);
+	}
+
+	return NULL;
+}
+
+
+int main(void) {
+	int i;
+
+	srand(time(NULL));
+
+	printf("Enter number of philosophers: ");
+	scanf("%d",&philosophers_count);
+	philosophers = (pthread_t*) malloc(philosophers_count*sizeof(pthread_t));
+	forks = (pthread_mutex_t*) malloc(philosophers_count*sizeof(pthread_mutex_t));
+
+	for(i=0; i<philosophers_count; ++i)
+		if(pthread_mutex_init(forks+i,NULL) != 0) {
+			printf("Failed initializing fork %d\n", i+1);
+			return 1;
+		}
+
+	for(i=0; i<philosophers_count; ++i) {
+		pthread_create(philosophers+i, NULL, &philosopher, NULL);
+	}
+
+	for(i=0;i<philosophers_count;++i)
+		pthread_join(*(philosophers+i), NULL);
+
+	free(philosophers);
+	free(forks);
 
 	return 0;
 }
